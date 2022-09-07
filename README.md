@@ -6,7 +6,7 @@
 
 每天定时自动查询宿舍电量，低电量提醒！！！
 
-如想修改定时运行的时间，可修改 `.github/workflows/healthReport.yml` 中 `schedule` 属性。
+如想修改定时运行的时间，可修改 `.github/workflows/nju-electricity-reminder.yml` 中 `schedule` 属性。
 
 ## Github Actions 启用步骤
 
