@@ -1,0 +1,32 @@
+name: nju-electricity-reminder
+
+on:
+  schedule:
+    - cron: '0 2 * * *' # 东八区时间 (GMT+8) 的 12:00
+  workflow_dispatch: # add manually button
+
+jobs:
+  nju-electricity-reminder:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.6'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      
+      - name: Run Spider
+        uses: nick-fields/retry@v2
+        env:
+          DATA: ${{ secrets.DATA }}
+        with:
+          timeout_minutes: 3
+          max_attempts: 3
+          command: python nju_electricity_reminder/main.py
