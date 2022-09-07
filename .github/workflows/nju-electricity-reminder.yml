@@ -23,10 +23,6 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       
       - name: Run Spider
-        uses: nick-fields/retry@v2
         env:
           DATA: ${{ secrets.DATA }}
-        with:
-          timeout_minutes: 3
-          max_attempts: 3
-          command: python nju_electricity_reminder/main.py
+        run: python nju_electricity_reminder/main.py

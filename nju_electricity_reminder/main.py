@@ -20,6 +20,6 @@ if __name__ == '__main__':
     for room in myRooms:
         name = room["area_name"] + room["build_name"] + room["room_name"]
         electricity = room["dfyl"]
-        print("当前电量: " + electricity)
+        print(f"当前电量: {electricity}")
         if electricity < config["threshold"]:
             exit(-1)
