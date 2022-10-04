@@ -22,8 +22,9 @@ def login(username: str, password: str, to_url: str) -> requests.sessions.Sessio
     :param to_url: callback url, like "https://ehall.nju.edu.cn:443/login?service=https://ehall.nju.edu.cn/ywtb-portal/official/index.html"
     :return: requests.sessions.Session
     """
-    url = f"https://authserver.nju.edu.cn/authserver/login?service={to_url}&login_type=mobileLogin"
-    lt, dllt, execution, _eventId, rmShown, pwdDefaultEncryptSalt = getLoginCasData(url)
+    url = f"https://authserver.nju.edu.cn/authserver/login"
+    params = dict(service=to_url, login_type="mobileLogin")
+    lt, dllt, execution, _eventId, rmShown, pwdDefaultEncryptSalt = getLoginCasData(url, params)
     data = dict(
         username=username,
         password=utils.encrypt_password(password, pwdDefaultEncryptSalt),
@@ -37,21 +38,21 @@ def login(username: str, password: str, to_url: str) -> requests.sessions.Sessio
     for _ in range(3):
         try:
             data["captchaResponse"] = getCaptcha(username)
-            session.post(url=url, data=data)
+            session.post(url=url, params=params, data=data)
             if session.cookies.get("MOD_AUTH_CAS") or session.cookies.get("JSESSIONID"):
                 return session
         except Exception: pass
     raise Exception("login error")
 
 
-def getLoginCasData(url: str):
+def getLoginCasData(url: str, params: dict):
     r"""返回CAS数据和初始JSESSIONID
 
     :param url: the full url
     :return: lt, dllt, execution, _eventId, rmShown, pwdDefaultEncryptSalt
     """
     try:
-        response = session.get(url)
+        response = session.get(url, params=params)
         if response.status_code == 200:
             # 获取 html 中 hidden 的表单 input
             lt = re.search(r'<input type="hidden" name="lt" value="(.*?)"/>', response.text).group(1)
